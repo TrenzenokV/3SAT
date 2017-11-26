@@ -1,3 +1,5 @@
+package edu.wut.project;
+
 import javafx.util.Pair;
 
 import java.util.ArrayList;

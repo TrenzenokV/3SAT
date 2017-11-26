@@ -1,3 +1,5 @@
+package edu.wut.project;
+
 import java.util.Comparator;
 
 public class ClauseComparator implements Comparator<Clause> {

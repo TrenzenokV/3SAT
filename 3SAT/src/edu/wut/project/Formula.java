@@ -1,3 +1,5 @@
+package edu.wut.project;
+
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -50,9 +52,9 @@ public class Formula {
     public Pair<Boolean, ArrayList<Literal>> checkSAT(ArrayList<Literal> partialAssignment, int flag)
     {
         /*System.out.println("stopFlagTrue = " + stopFlagTrue  +" ITERATION");
-        for(Clause c: clauses)
+        for(edu.wut.project.Clause c: clauses)
         {
-            for(Literal l: c.getLiterals())
+            for(edu.wut.project.Literal l: c.getLiterals())
                 System.out.print(l.getLiteral() + " " + l.getLiteralValue() +" "+l.getVariable() + " "+l.getVariableValue() + " ");
             System.out.println();
         }*/

@@ -1,3 +1,4 @@
+package edu.wut.project;
 
 public class Literal {
     private String literal;

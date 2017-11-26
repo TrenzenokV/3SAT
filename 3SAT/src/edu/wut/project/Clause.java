@@ -1,3 +1,5 @@
+package edu.wut.project;
+
 import java.util.ArrayList;
 
 public class Clause {
@@ -21,7 +23,7 @@ public class Clause {
         return isSat;
     }
 
-    /* Clause is empty if all literals have false(-1) value*/
+    /* edu.wut.project.Clause is empty if all literals have false(-1) value*/
     public int isEmptyClause()
     {
         int isEmpty = 1; // isEmpty = 1 if clause is empty and 0 otherwise
