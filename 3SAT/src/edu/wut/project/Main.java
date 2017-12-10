@@ -5,7 +5,47 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args)
+    public static void main(String[] args) {
+        
+        mainTestParser(args);
+
+
+    }
+
+    public static void mainTestParser(String[] args) {
+        String formula = "(A||B||C)&&(~A||B||F)&& (A ||~B)&&(B)&&(B||~A)";
+        String formula1 = "(A)";
+
+        Parser parser = new Parser(formula);
+        parser.tryParse();
+
+        if (parser.isValid()) {
+            ArrayList<Clause> parsedClausesList = parser.getParsedClausesList();
+
+            System.out.println("SUCCESSFULLY PARSED!!!");
+
+            System.out.println("OUTPUT OF PARSED FORMULA: ");
+
+            int nc = 1;
+            for (Clause clause : parsedClausesList) {
+                System.out.println("CLAUSE " + nc + ":");
+                ++nc;
+
+                int nl = 1;
+                for (Literal literal : clause.getLiterals()) {
+
+                    System.out.println("LITERAL " + nl + " is  " + literal.getVariable());
+                    ++nl;
+                }
+                System.out.println();
+
+            }
+        } else {
+            System.out.println("Formula: " + formula + " is NOT valid!!!");
+        }
+    }
+
+    public static void mainOLD(String[] args)
     {
         String[] clause1 = {"~A"};
         String[] clause2 = {"A"};
@@ -41,5 +81,4 @@ public class Main {
             }
         System.out.println("FINISHED");
     }
-
 }
