@@ -14,9 +14,10 @@ public class Parser {
         parsedClausesList = new ArrayList<>();
 
         setProcessedString(processedString);
+        tryParse();
     }
 
-    public void tryParse() {
+    private void tryParse() {
         if (!isValid) {
             return;
         }
