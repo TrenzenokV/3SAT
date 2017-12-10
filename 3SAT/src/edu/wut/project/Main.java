@@ -2,83 +2,186 @@ package edu.wut.project;
 
 import javafx.util.Pair;
 
-import java.util.ArrayList;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
-        
-        mainTestParser(args);
-
-
+       menu();
     }
 
-    public static void mainTestParser(String[] args) {
-        String formula = "(A||B||C)&&(~A||B||F)&& (A ||~B)&&(B)&&(B||~A)";
-        String formula1 = "(A)";
+    private static final String generatedFileDefaultFilename = "generated.txt";
+    private static final String helpString =
+            "Enter \"-s filename...\" to solve formulas in file(s)\n" +
+            "   At least one filename required\n" +
+            "   The results are stored in file(s) named \"results.filename\"\n" +
+            "       Example: -s file.txt (Results are stored in \"results.file.txt\")\n" +
+            "       Example: -s file1 file2 file3 (Results are stored in \"results.file1\", \"results.file2\" and \"results.file3\" respectively)\n" +
+            "Enter \"-g numberOfVariables numberOfClauses numberOfFormulas [outputFilename]\" to generate example file with specified number of variables and formulas\n" +
+            "   Number of variables can be 1 to 26 (letters in modern English alphabet)\n" +
+            "   Number of clauses is a number of clauses in single formula. Must be at least 1\n" +
+            "   Number of formulas is a number of formulas in file. Must be at least 1\n" +
+            "   Optionally you can specify output filename (default is \""+ generatedFileDefaultFilename + "\")\n" +
+            "       Example: -g 3 5 50\n" +
+            "       Example: -g 5 3 100 customFilename.txt\n" +
+            "Enter \"exit\" to exit\n" +
+            "Enter \"help\" to view this help";
 
-        Parser parser = new Parser(formula);
-        parser.tryParse();
+    public static void menu() {
+        System.out.println("Welcome!");
+        System.out.println(helpString);
 
-        if (parser.isValid()) {
-            ArrayList<Clause> parsedClausesList = parser.getParsedClausesList();
+        Scanner scanner = new Scanner(System.in);
 
-            System.out.println("SUCCESSFULLY PARSED!!!");
+        for (String inputString = scanner.nextLine().trim();
+             !inputString.toLowerCase().equals("exit");
+             inputString = scanner.nextLine().trim()) {
 
-            System.out.println("OUTPUT OF PARSED FORMULA: ");
+            if (inputString.isEmpty()) {
+                System.out.println("Entered empty string! Enter \"help\" to view help");
+                continue;
+            }
 
-            int nc = 1;
-            for (Clause clause : parsedClausesList) {
-                System.out.println("CLAUSE " + nc + ":");
-                ++nc;
+            if (inputString.toLowerCase().equals("help")) {
+                System.out.println(helpString);
+                continue;
+            }
 
-                int nl = 1;
-                for (Literal literal : clause.getLiterals()) {
+            if (inputString.toLowerCase().startsWith("-g ")) {
+                String[] tokens = inputString.substring(2).trim().split("\\s+");
 
-                    System.out.println("LITERAL " + nl + " is  " + literal.getVariable());
-                    ++nl;
+                if (tokens.length < 3) {
+                    System.out.println("Too few arguments to -g command!");
+                    continue;
                 }
-                System.out.println();
+                if (tokens.length > 4) {
+                    System.out.println("Too many arguments to -g command!");
+                    continue;
+                }
 
+                String generateFilename = generatedFileDefaultFilename;
+                if (tokens.length == 4) {
+                    generateFilename = tokens[3];
+                }
+
+                try {
+                    int numberOfVariables = Integer.parseInt(tokens[0]);
+                    int numberOfClauses = Integer.parseInt(tokens[1]);
+                    int numberOfFormulas = Integer.parseInt(tokens[2]);
+
+                    if (numberOfVariables < 1 || numberOfVariables > 26) {
+                        System.out.println("Number of variables must be from 1 to 26!");
+                        continue;
+                    }
+
+                    if (numberOfClauses < 1) {
+                        System.out.println("Number of clauses must be at least 1!");
+                        continue;
+                    }
+
+                    if (numberOfFormulas < 1) {
+                        System.out.println("Number of formulas must be at least 1!");
+                        continue;
+                    }
+
+                    generateFormulasFile(numberOfVariables, numberOfClauses, numberOfFormulas, generateFilename);
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Inputted numbers are incorrect!");
+                }
+
+                continue;
             }
-        } else {
-            System.out.println("Formula: " + formula + " is NOT valid!!!");
+
+            if (inputString.toLowerCase().startsWith("-s ")) {
+                String[] filenames = inputString.substring(2).trim().split("\\s+");
+
+                solveFormulasInFiles(filenames);
+
+                continue;
+            }
+
+            System.out.println("Invalid input! Enter \"help\" to view help");
+        }
+        System.out.println("Exiting...");
+    }
+
+    public static void generateFormulasFile(int numberOfVariables, int numberOfClauses, int numberOfFormulas, String filename) {
+        FormulasGenerator formulasGenerator = new FormulasGenerator(numberOfVariables, numberOfClauses, numberOfFormulas);
+
+        String[] formulas = formulasGenerator.generateFormulas();
+
+        try (PrintWriter printWriter = new PrintWriter(filename)) {
+            for (String formulaString : formulas) {
+                printWriter.println(formulaString);
+            }
+            System.out.println("Generated example file named \"" + filename + "\"");
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot write to \"" + filename + "\"! It may be read-only or file can't be created");
         }
     }
 
-    public static void mainOLD(String[] args)
-    {
-        String[] clause1 = {"~A"};
-        String[] clause2 = {"A"};
-        ArrayList<Literal> literals = new ArrayList<>();
-        for(int i = 0; i < clause1.length; ++i)
-        {
-            literals.add(new Literal(clause1[i]));
-        }
-        Clause clauseM = new Clause(literals);
+    public static void solveFormulasInFiles(String[] filenames) {
+        for (String filename : filenames) {
+            try (Stream<String> stringStream = Files.lines(Paths.get(filename))) {
+                String[] lines = stringStream.toArray(String[]::new);
+                ArrayList<String> resultLines = new ArrayList<>();
 
-        literals.clear();
-        for(int i = 0; i < clause2.length; ++i)
-        {
-            literals.add(new Literal(clause2[i]));
-        }
-        Clause clauseN = new Clause(literals);
+                for (String lineString : lines) {
+                    String resultLine = "";
 
-        ArrayList<Clause> clauses = new ArrayList<>();
-        clauses.add(clauseM);
-        clauses.add(clauseN);
+                    Parser parser = new Parser(lineString);
 
-        Formula f = new Formula(clauses);
+                    if (parser.isValid()) {
+                        //if successfully parsed clauses from formula string
+                        Formula formula = new Formula(parser.getParsedClausesList());
 
-        ArrayList<Literal> partialAssignment = new ArrayList<>();
-        Pair<Boolean, ArrayList<Literal>> result;
-        result = f.checkSAT(partialAssignment, 0);
+                        ArrayList<Literal> partialAssignment = new ArrayList<>();
+                        Pair<Boolean, ArrayList<Literal>> result;
+                        result = formula.checkSAT(partialAssignment, 0);
 
-        System.out.println(result.getKey());
-        if(result.getKey() == true)
-            for(Literal l: result.getValue())
-            {
-                System.out.println(l.getLiteral() + " " + l.getLiteralValue() +" "+l.getVariable() + " "+l.getVariableValue() + " ");
+                        if (result.getKey() == true) {
+                            //formula is satisfiable
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("YES ");
+
+                            for (Literal literal : result.getValue()) {
+                                sb.append(literal.getVariable()).append("=").append(literal.getVariableValue());
+                                sb.append(" ");
+                            }
+                            //crop last unneeded space
+                            sb.setLength(sb.length() - 1);
+
+                            resultLine = sb.toString();
+                        } else {
+                            //formula is NOT satisfiable
+                            resultLine = "NO";
+                        }
+                    } else {
+                        //parse error
+                        resultLine = "Incorrect formula!";
+                    }
+
+                    resultLines.add(resultLine);
+                }
+
+                //write results lines into file
+                try (PrintWriter printWriter = new PrintWriter("result." + filename)) {
+                    for (String resultLine : resultLines) {
+                        printWriter.println(resultLine);
+                    }
+                }
+                System.out.println("Results stored in file named \"result." + filename + "\"");
+            } catch (NoSuchFileException e) {
+                System.out.println("File named \"" + filename + "\" was not found!");
+            } catch (FileNotFoundException e) {
+                System.out.println("Cannot write to \"result." + filename + "\"! It may be read-only or file can't be created");
+            } catch (IOException e) {
+                System.out.println(e);
             }
-        System.out.println("FINISHED");
+        }
     }
+
 }
