@@ -9,7 +9,11 @@ import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
-       menu();
+        if (args.length == 0) {
+            menu();
+        } else {
+            solveFormulasInFiles(args);
+        }
     }
 
     private static final String generatedFileDefaultFilename = "generated.txt";
