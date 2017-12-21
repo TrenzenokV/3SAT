@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class Formula {
     private ArrayList<Clause> clauses;
     private  ClauseComparator clauseComparator;
+    int stopFlagTrue = -1;
 
 
     public Formula(){}
@@ -42,22 +43,18 @@ public class Formula {
             {
                 if(c.containVariable(l.getVariable()) != -1)
                 {
-                    c.getLiterals().get(c.containVariable(l.getVariable())).setVariableValue(l.getVariableValue());
+                    for(Literal cl: c.getLiterals())
+                    {
+                        if(cl.containVariable(l.getVariable()) == 1)
+                            cl.setVariableValue(l.getVariableValue());
+                    }
                 }
             }
         }
     }
-    int stopFlagTrue = -1;
-    //TODO ASSIGN VALUE TO ALL VARIABLES.
+
     public Pair<Boolean, ArrayList<Literal>> checkSAT(ArrayList<Literal> partialAssignment, int flag)
     {
-        /*System.out.println("stopFlagTrue = " + stopFlagTrue  +" ITERATION");
-        for(edu.wut.project.Clause c: clauses)
-        {
-            for(edu.wut.project.Literal l: c.getLiterals())
-                System.out.print(l.getLiteral() + " " + l.getLiteralValue() +" "+l.getVariable() + " "+l.getVariableValue() + " ");
-            System.out.println();
-        }*/
         Clause currentClause = this.firstNotSatClause();
         if(currentClause == null ) {
             stopFlagTrue = 1;
@@ -67,7 +64,7 @@ public class Formula {
         }
         else {
             /* First branch*/
-            if(flag == 0 && stopFlagTrue== -1)
+            if(flag == 0 && stopFlagTrue == -1)
             {
                 int index = currentClause.getFirstNotSetLiteral();
                 currentClause.getLiterals().get(index).setLiteralValue(1);
@@ -93,7 +90,7 @@ public class Formula {
                 flag = 2;
             }
             /* Third branch*/
-            if(flag == 2&& stopFlagTrue==-1)
+            if(flag == 2&& stopFlagTrue == -1)
             {
                 partialAssignment.get(partialAssignment.size() - 1).setLiteralValue(0);
                 int index = currentClause.getFirstNotSetLiteral();

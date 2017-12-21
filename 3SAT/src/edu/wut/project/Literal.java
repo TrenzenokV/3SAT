@@ -53,5 +53,11 @@ public class Literal {
     }
 
 
+    public int containVariable(char variable)
+    {
+        if(variable == this.getVariable())
+            return 1;
+        return -1;
+    }
 
 }
