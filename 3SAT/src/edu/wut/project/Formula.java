@@ -9,6 +9,7 @@ public class Formula {
     private ArrayList<Clause> clauses;
     private  ClauseComparator clauseComparator;
     int stopFlagTrue = -1;
+    int stopAddingFlag = 0;
 
 
     public Formula(){}
@@ -60,11 +61,23 @@ public class Formula {
         {
             for(Literal l: c.getLiterals())
             {
-                if(l.getVariableValue() == 0)
+                if(l.getVariableValue() == 0 && !this.containsLiteral(toReturn,l)) {
+                    l.setLiteralValue(2);
                     toReturn.add(l);
+                }
             }
         }
         return toReturn;
+    }
+
+    private boolean containsLiteral(ArrayList<Literal> src, Literal literal)
+    {
+        for(Literal l: src)
+        {
+            if(l.getLiteral().equals(literal.getLiteral()))
+                return true;
+        }
+        return false;
     }
     public Pair<Boolean, ArrayList<Literal>> checkSAT(ArrayList<Literal> partialAssignment, int flag)
     {
@@ -117,11 +130,10 @@ public class Formula {
         }
         switch (stopFlagTrue) {
             case 1:
-                ArrayList<Literal> arbitraryVariables = this.getNotSetLiterals();
-                for(Literal l: arbitraryVariables)
-                {
-                    l.setVariableValue(2);
-                    partialAssignment.add(l);
+                if(stopAddingFlag == 0) {
+                    ArrayList<Literal> arbitraryVariables = this.getNotSetLiterals();
+                    partialAssignment.addAll(arbitraryVariables);
+                    stopAddingFlag = -1;
                 }
                 return new Pair(Boolean.TRUE, partialAssignment);
             case 2:
