@@ -74,7 +74,7 @@ public class Formula {
     {
         for(Literal l: src)
         {
-            if(l.getLiteral().equals(literal.getLiteral()))
+            if(l.getVariable() == literal.getVariable())
                 return true;
         }
         return false;
