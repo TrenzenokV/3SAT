@@ -53,6 +53,19 @@ public class Formula {
         }
     }
 
+    private ArrayList<Literal> getNotSetLiterals()
+    {
+        ArrayList<Literal> toReturn = new ArrayList<>();
+        for(Clause c: this.clauses)
+        {
+            for(Literal l: c.getLiterals())
+            {
+                if(l.getVariableValue() == 0)
+                    toReturn.add(l);
+            }
+        }
+        return toReturn;
+    }
     public Pair<Boolean, ArrayList<Literal>> checkSAT(ArrayList<Literal> partialAssignment, int flag)
     {
         Clause currentClause = this.firstNotSatClause();
@@ -104,6 +117,12 @@ public class Formula {
         }
         switch (stopFlagTrue) {
             case 1:
+                ArrayList<Literal> arbitraryVariables = this.getNotSetLiterals();
+                for(Literal l: arbitraryVariables)
+                {
+                    l.setVariableValue(2);
+                    partialAssignment.add(l);
+                }
                 return new Pair(Boolean.TRUE, partialAssignment);
             case 2:
                 return new Pair(Boolean.FALSE, null);
