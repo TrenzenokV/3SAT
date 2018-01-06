@@ -9,11 +9,21 @@ import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
+        //testWithTimeMeasurements();
+
         if (args.length == 0) {
             menu();
         } else {
             solveFormulasInFiles(args);
         }
+    }
+
+    public static void testWithTimeMeasurements() {
+        int[] nValues = new int[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+                11, 12, 13, 14, 15, 16, 17, 18, 19,
+                20, 21, 22, 23, 24, 25, 26};
+
+        measureTime(nValues, 500);
     }
 
     private static final String generatedFileDefaultFilename = "generated.txt";
@@ -194,4 +204,95 @@ public class Main {
         }
     }
 
+    public static void measureTime(int[] nValues, int clausesQuantity) {
+        int numberOfFormulas = 1000;
+
+        ArrayList<String> filenames = new ArrayList<>();
+
+        for (int n : nValues) {
+            String filename = "TM_formulas_N=" + n + "_CL=" + clausesQuantity + ".txt";
+            filenames.add(filename);
+            generateFormulasFile(n, clausesQuantity, numberOfFormulas, filename);
+        }
+
+        for (int i = 0; i < nValues.length; ++i) {
+            try (Stream<String> stringStream = Files.lines(Paths.get(filenames.get(i)))) {
+                String[] lines = stringStream.toArray(String[]::new);
+                ArrayList<String> resultLines = new ArrayList<>();
+
+                ArrayList<Long> timeValues = new ArrayList<>(); //for time
+
+                for (String lineString : lines) {
+                    String resultLine = "";
+
+                    Parser parser = new Parser(lineString);
+
+                    if (parser.isValid()) {
+                        //if successfully parsed clauses from formula string
+                        Formula formula = new Formula(parser.getParsedClausesList());
+
+                        ArrayList<Literal> partialAssignment = new ArrayList<>();
+                        Pair<Boolean, ArrayList<Literal>> result;
+
+                        long startTime = System.nanoTime(); //for time
+
+                        result = formula.checkSAT(partialAssignment, 0);
+
+                        long endTime = System.nanoTime(); //for time
+                        long elapsedTime = endTime - startTime; //for time
+
+                        timeValues.add(elapsedTime);
+
+                        if (result.getKey() == true) {
+                            //formula is satisfiable
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("YES ");
+
+                            for (Literal literal : result.getValue()) {
+                                int variableValue = literal.getVariableValue();
+
+                                if (variableValue == 2) {
+                                    sb.append(literal.getVariable()).append("=").append("-1 OR 1; ");
+                                } else {
+                                    sb.append(literal.getVariable()).append("=").append(literal.getVariableValue());
+                                    sb.append("; ");
+                                }
+                            }
+                            //crop last unneeded space
+                            sb.setLength(sb.length() - 2);
+
+                            resultLine = sb.toString();
+                        } else {
+                            //formula is NOT satisfiable
+                            resultLine = "NO";
+                        }
+                    } else {
+                        //parse error
+                        resultLine = "Incorrect formula!";
+                    }
+
+                    resultLines.add(resultLine);
+                }
+
+                //write results lines into file
+                try (PrintWriter printWriter = new PrintWriter(filenames.get(i).replaceAll("formulas", "results"))) {
+                    for (String resultLine : resultLines) {
+                        printWriter.println(resultLine);
+                    }
+                }
+                //write time values into file
+                try (PrintWriter printWriter = new PrintWriter(filenames.get(i).replaceAll("formulas", "times"))) {
+                    for (Long timeValue : timeValues) {
+                        printWriter.println(nValues[i] + " " + timeValue);
+                    }
+                }
+            } catch (NoSuchFileException e) {
+                System.out.println("File named \"" + filenames.get(i) + "\" was not found!");
+            } catch (FileNotFoundException e) {
+                System.out.println("Cannot write to \"result." + filenames.get(i) + "\"! It may be read-only or file can't be created");
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+    }
 }
