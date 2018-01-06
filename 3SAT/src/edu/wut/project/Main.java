@@ -155,15 +155,14 @@ public class Main {
                                 int variableValue = literal.getVariableValue();
 
                                 if (variableValue == 2) {
-                                    sb.append(literal.getVariable()).append("=").append("0 ");
-                                    sb.append(literal.getVariable()).append("=").append("1 ");
+                                    sb.append(literal.getVariable()).append("=").append("-1 OR 1; ");
                                 } else {
                                     sb.append(literal.getVariable()).append("=").append(literal.getVariableValue());
-                                    sb.append(" ");
+                                    sb.append("; ");
                                 }
                             }
                             //crop last unneeded space
-                            sb.setLength(sb.length() - 1);
+                            sb.setLength(sb.length() - 2);
 
                             resultLine = sb.toString();
                         } else {
