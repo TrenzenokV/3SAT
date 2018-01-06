@@ -152,8 +152,15 @@ public class Main {
                             sb.append("YES ");
 
                             for (Literal literal : result.getValue()) {
-                                sb.append(literal.getVariable()).append("=").append(literal.getVariableValue());
-                                sb.append(" ");
+                                int variableValue = literal.getVariableValue();
+
+                                if (variableValue == 2) {
+                                    sb.append(literal.getVariable()).append("=").append("0 ");
+                                    sb.append(literal.getVariable()).append("=").append("1 ");
+                                } else {
+                                    sb.append(literal.getVariable()).append("=").append(literal.getVariableValue());
+                                    sb.append(" ");
+                                }
                             }
                             //crop last unneeded space
                             sb.setLength(sb.length() - 1);
