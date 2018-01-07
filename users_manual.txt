@@ -1,0 +1,24 @@
+The usage of the program is fairly straightforward, it is based on concept of interactive "shell", where user types commands after launch of the program. Here is the list of available commands (this help is also available within the program by issuing the "help" command):
+
+Enter "-s filename..." to solve formulas in file(s)
+      At least one filename required
+      The results are stored in file(s) named "results.filename"
+            Example: -s file.txt (Results are stored in "results.file.txt")
+            Example: -s file1 file2 file3 (Results are stored in "results.file1", "results.file2" and "results.file3" respectively)
+Enter "-g numberOfVariables numberOfClauses numberOfFormulas [outputFilename]" to generate example file with specified number of variables and formulas
+      Number of variables can be 1 to 26 (letters in modern English alphabet)
+      Number of clauses is a number of clauses in single formula. Must be at least 1
+      Number of formulas is a number of formulas in file. Must be at least 1
+      Optionally you can specify output filename (default is "generated.txt")
+            Example: -g 3 5 50
+            Example: -g 5 3 100 customFilename.txt
+Enter "exit" to exit
+Enter "help" to view this help
+
+It is also possible to lauch the program with unlimited amount of input filenames as command-line arguments. For example: 
+
+java -jar 3SAT.jar filename1.txt filename2.txt
+
+After lauching the program will solve formulas stored in files and outputs them to respective result files. 
+
+Program is also informative in terms of possible errors: invalid command input, no such file exists to open, failure to write to a file (in case of the file with the same name exists and is read-only for example), too few or too less arguments for a certain command, correctness of formula, range of needed integer arguments, etc. 
