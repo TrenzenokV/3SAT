@@ -99,6 +99,7 @@ public class Formula {
         int returnFlag = 0;
         for(Clause c: this.clauses)
         {
+            returnFlag = 0;
             ArrayList<Literal> cLiterals = c.getLiterals();
             if(toFind.size() != cLiterals.size())
                 continue;

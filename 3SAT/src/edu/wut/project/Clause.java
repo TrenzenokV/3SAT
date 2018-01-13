@@ -76,7 +76,10 @@ public class Clause {
         for(Literal l: this.literals)
         {
             Literal toAdd = new Literal(l.getLiteral());
-            toAdd.setLiteralValue(l.getLiteralValue());
+            if(this.literals.indexOf(l) == 0)
+                toAdd.setLiteralValue(1);
+            else
+                toAdd.setLiteralValue(0);
             toReturn.add(toAdd);
         }
         return  toReturn;

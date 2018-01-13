@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 public class Main {
 
 
-    static int formulaNum = 0;
+    static int formulaNum = 1;
 
     public static void main(String[] args) {
         //testWithTimeMeasurements();
@@ -159,10 +159,10 @@ public class Main {
                         ArrayList<Literal> partialAssignment = new ArrayList<>();
                         Pair<Boolean, ArrayList<Literal>> result;
 
-                        //System.out.println(formulaNum);
-                        //formulaNum++;
-                        result = formula.checkSAT(partialAssignment, 0);
+                        System.out.println(formulaNum);
 
+                        result = formula.checkSAT(partialAssignment, 0);
+                        formulaNum++;
                         if (result.getKey() == true) {
                             //formula is satisfiable
                             StringBuilder sb = new StringBuilder();
