@@ -1,6 +1,6 @@
 package edu.wut.project;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +34,11 @@ public class Parser {
         String[] clausesStringsArray = processedString.split("\\)&&\\(");
 
         for (String clauseString : clausesStringsArray) {
-            String[] literalsStringsArray = clauseString.split("\\|\\|");
+            String[] allLiteralsStringsArray = clauseString.split("\\|\\|");
+
+            String[] literalsStringsArray = new LinkedHashSet<String>(Arrays.
+                    asList(allLiteralsStringsArray)).
+                    toArray(new String[0]);
 
             ArrayList<Literal> literalsList = new ArrayList<>();
 
