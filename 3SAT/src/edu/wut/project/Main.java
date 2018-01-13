@@ -8,6 +8,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class Main {
+
+
+    static int formulaNum = 0;
+
     public static void main(String[] args) {
         //testWithTimeMeasurements();
 
@@ -154,6 +158,9 @@ public class Main {
 
                         ArrayList<Literal> partialAssignment = new ArrayList<>();
                         Pair<Boolean, ArrayList<Literal>> result;
+
+                        //System.out.println(formulaNum);
+                        //formulaNum++;
                         result = formula.checkSAT(partialAssignment, 0);
 
                         if (result.getKey() == true) {
@@ -183,7 +190,7 @@ public class Main {
                         //parse error
                         resultLine = "Incorrect formula!";
                     }
-
+                    //System.out.println(resultLine);
                     resultLines.add(resultLine);
                 }
 

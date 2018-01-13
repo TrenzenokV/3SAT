@@ -60,4 +60,49 @@ public class Clause {
         }
         return -1;
     }
+    public void printClause()
+    {
+        for(Literal l : this.literals)
+        {
+            System.out.print(l.getLiteral() +" = " +l.getLiteralValue());
+        }
+        System.out.println();
+    }
+
+
+    public ArrayList<Literal> cloneLiterals()
+    {
+        ArrayList<Literal> toReturn = new ArrayList<>();
+        for(Literal l: this.literals)
+        {
+            Literal toAdd = new Literal(l.getLiteral());
+            toAdd.setLiteralValue(l.getLiteralValue());
+            toReturn.add(toAdd);
+        }
+        return  toReturn;
+    }
+
+
+    //isSet returns 1 if every literal is set - 0 otherwise
+    public int isSet()
+    {
+        for(Literal l: this.literals)
+        {
+            if(l.getLiteralValue() == 0)
+                return 0;
+        }
+        return 1;
+    }
+
+    public int numOfSetLiterals()
+    {
+        int toReturn = 0;
+        for(Literal l: this.literals)
+        {
+            if(l.getLiteralValue() != 0)
+                toReturn++;
+        }
+        return toReturn;
+    }
+
 }
