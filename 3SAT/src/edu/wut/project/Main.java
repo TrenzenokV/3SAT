@@ -27,7 +27,10 @@ public class Main {
                 11, 12, 13, 14, 15, 16, 17, 18, 19,
                 20, 21, 22, 23, 24, 25, 26};
 
+        measureTime(nValues, 100);
+        measureTime(nValues, 200);
         measureTime(nValues, 500);
+        measureTime(nValues, 1000);
     }
 
     private static final String generatedFileDefaultFilename = "generated.txt";
@@ -223,6 +226,8 @@ public class Main {
             generateFormulasFile(n, clausesQuantity, numberOfFormulas, filename);
         }
 
+        ArrayList<String> timeFileLines = new ArrayList<>();
+
         for (int i = 0; i < nValues.length; ++i) {
             try (Stream<String> stringStream = Files.lines(Paths.get(filenames.get(i)))) {
                 String[] lines = stringStream.toArray(String[]::new);
@@ -288,12 +293,16 @@ public class Main {
                         printWriter.println(resultLine);
                     }
                 }
-                //write time values into file
-                try (PrintWriter printWriter = new PrintWriter(filenames.get(i).replaceAll("formulas", "times"))) {
-                    for (Long timeValue : timeValues) {
-                        printWriter.println(nValues[i] + " " + timeValue);
-                    }
+
+                //calc average
+                long sum = 0;
+                for (Long l : timeValues) {
+                    sum += l;
                 }
+
+                long av = sum / timeValues.size();
+                timeFileLines.add(nValues[i] + " " + av);
+
             } catch (NoSuchFileException e) {
                 System.out.println("File named \"" + filenames.get(i) + "\" was not found!");
             } catch (FileNotFoundException e) {
@@ -301,6 +310,16 @@ public class Main {
             } catch (IOException e) {
                 System.out.println(e);
             }
+        }
+
+        //write time values into file
+        String filename = "TM_CL" + clausesQuantity + ".txt";
+        try (PrintWriter printWriter = new PrintWriter(filename)) {
+            for (String s : timeFileLines) {
+                printWriter.println(s);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot write to \"result." + filename + "\"! It may be read-only or file can't be created");
         }
     }
 }
