@@ -254,6 +254,36 @@ public class Formula {
 
                     checkSAT(partialAssignment, flag);
 
+                    if((trackClause.numOfSetLiterals() == 2) && stopFlag == -1)
+                    {
+
+                        currentClause = this.findClause(trackClause);
+
+                        for(int i = 0; i < stepTrackCounter; ++i)
+                        {
+                            int indexOfLast = partialAssignment.size() - 1;
+                            partialAssignment.get(indexOfLast - i).setLiteralValue(0);
+                        }
+
+                        this.assignValueToVariables(partialAssignment);
+
+                        for(int i = 0; i < stepTrackCounter; ++i)
+                        {
+                            int indexOfLast = partialAssignment.size() - 1;
+                            partialAssignment.remove(indexOfLast);
+                        }
+
+                        stepTrackCounter = 0;
+
+                        flag = 2;
+
+                        if(trackClause.getLiterals().size() > 2) {
+                            trackClause.getLiterals().get(0).setLiteralValue(-1);
+                            trackClause.getLiterals().get(1).setLiteralValue(-1);
+                            trackClause.getLiterals().get(2).setLiteralValue(1);
+                        }
+                    }
+
                     //System.out.println("FORMULA BEFORE 3RD BRANCH");
                     //this.printFormula();
                 }

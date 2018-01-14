@@ -159,10 +159,11 @@ public class Main {
                         ArrayList<Literal> partialAssignment = new ArrayList<>();
                         Pair<Boolean, ArrayList<Literal>> result;
 
-                        System.out.println(formulaNum);
+                        //System.out.println(formulaNum);
 
                         result = formula.checkSAT(partialAssignment, 0);
-                        formulaNum++;
+                        //formulaNum++;
+
                         if (result.getKey() == true) {
                             //formula is satisfiable
                             StringBuilder sb = new StringBuilder();
