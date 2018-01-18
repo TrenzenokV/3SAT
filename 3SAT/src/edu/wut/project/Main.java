@@ -13,7 +13,7 @@ public class Main {
     static int formulaNum = 1;
 
     public static void main(String[] args) {
-        //testWithTimeMeasurements();
+       //testWithTimeMeasurements();
 
         if (args.length == 0) {
             menu();
@@ -27,10 +27,10 @@ public class Main {
                 11, 12, 13, 14, 15, 16, 17, 18, 19,
                 20, 21, 22, 23, 24, 25, 26};
 
-        measureTime(nValues, 100);
-        measureTime(nValues, 200);
-        measureTime(nValues, 500);
-        measureTime(nValues, 1000);
+        measureTime(nValues, 30);
+        measureTime(nValues, 60);
+        measureTime(nValues, 120);
+        measureTime(nValues, 240);
     }
 
     private static final String generatedFileDefaultFilename = "generated.txt";
