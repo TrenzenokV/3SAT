@@ -23,7 +23,7 @@ public class Formula {
         this.clauses = myClauses;
         this.clauseComparator = new ClauseComparator();
         this.clauses.sort(clauseComparator);
-        //this.printFormula();
+        this.printFormula();
     }
 
 
